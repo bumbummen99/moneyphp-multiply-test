@@ -20,5 +20,5 @@
             "SkyRaptor\\Tests\\MoneyPHPMultiplyTest\\": "tests/"
         }
     },
-    "minimum-stability": "dev",
+    "minimum-stability": "dev"
 }
