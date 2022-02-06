@@ -1,0 +1,40 @@
+name: CI Code Checks
+
+on:
+  pull_request:
+  push:
+    branches: [ master ]
+
+jobs:
+  run:
+    runs-on: ubuntu-18.04
+    strategy:
+      fail-fast: false
+      matrix:
+        php-version: ['8.1']
+    name: PHP ${{ matrix.php-version }}
+    env:
+      PHP_VERSION: ${{ matrix.php-versions }}
+    steps:
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          extensions: bcmath,gmp,intl
+        env:
+          runner: ubuntu-18.04
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Cache dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.composer/cache/files
+          key: dependencies-laravel-php-${{ matrix.php-version }}-composer-${{ hashFiles('composer.json') }}
+
+      - name: Install composer packages
+        run: composer install --prefer-dist --no-interaction
+
+      - name: Tests Coverage
+        run: vendor/bin/phpunit
